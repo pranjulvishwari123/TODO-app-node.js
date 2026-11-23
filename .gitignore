@@ -20,3 +20,23 @@ Thumbs.db
 # Temporary files
 temp/
 tmp/
+
+
+# Node.js
+node_modules/
+.env
+.env.*
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+
+# Local Terraform configuration
+terraform.tfvars
+
+# AWS credentials
+.aws/
+*.pem
