@@ -121,6 +121,9 @@ resource "aws_iam_role" "github" {
 
 # GitHub Deployment Permissions
 
+
+# GitHub Deployment Permissions
+
 resource "aws_iam_role_policy" "github_deploy" {
   name = "${var.project_name}-github-deploy-policy"
   role = aws_iam_role.github.id
@@ -129,15 +132,18 @@ resource "aws_iam_role_policy" "github_deploy" {
     Version = "2012-10-17"
 
     Statement = [
+      # ECR Authentication
       {
         Effect = "Allow"
+
         Action = [
-          "ecs:UpdateService",
-          "ecs:DescribeServices"
+          "ecr:GetAuthorizationToken"
         ]
-        Resource = aws_ecs_service.app[*].id
+
+        Resource = "*"
       },
 
+      # Push Docker Images to ECR
       {
         Effect = "Allow"
 
@@ -152,6 +158,7 @@ resource "aws_iam_role_policy" "github_deploy" {
         Resource = aws_ecr_repository.app.arn
       },
 
+      # Register and Describe Task Definitions
       {
         Effect = "Allow"
 
@@ -163,6 +170,7 @@ resource "aws_iam_role_policy" "github_deploy" {
         Resource = "*"
       },
 
+      # Update and Describe ECS Service
       {
         Effect = "Allow"
 
@@ -171,9 +179,10 @@ resource "aws_iam_role_policy" "github_deploy" {
           "ecs:DescribeServices"
         ]
 
-        Resource = aws_ecs_service.app[0].id
+        Resource = aws_ecs_service.app[*].arn
       },
 
+      # Pass ECS Task Roles
       {
         Effect = "Allow"
 
@@ -199,3 +208,4 @@ resource "aws_iam_role_policy" "github_deploy" {
     aws_iam_role_policy_attachment.execution
   ]
 }
+
